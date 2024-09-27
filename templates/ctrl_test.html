@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Keep your existing head content -->
+</head>
+<body>
+    <div class="controller">
+        <div class="stick left-stick">
+            <button type="button" name="up" id="up" class="btn">↑</button>
+            <button type="button" name="down" id="down" class="btn">↓</button>
+        </div>
+        <iframe src="https://viewer.millicast.com?streamId=W3yfVd/myStreamName" allowfullscreen width="640" height="480"></iframe>
+        <div class="stick right-stick">
+            <div class="horizontal-buttons">
+                <button type="button" name="left" id="left" class="btn">←</button>
+                <button type="button" name="right" id="right" class="btn">→</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function sendCommand(command) {
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({[command]: ''}),
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+                sendCommand(this.name);
+            });
+        });
+    </script>
+</body>
+</html>

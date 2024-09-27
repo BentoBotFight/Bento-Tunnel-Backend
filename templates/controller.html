@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask RC Car Controller</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .controller {
+            display: flex;
+            justify-content: space-between;
+            width: 340px;
+        }
+        .stick {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            height: 170px;
+        }
+        .horizontal-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 170px;
+        }
+        .btn {
+            font-size: 24px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 80px;
+            height: 80px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn:active {
+            background-color: #3e8e41;
+        }
+        .background{
+            background-color: #001782;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body>
+    <!--<div class="controller background">-->
+        <div class="stick left-stick">
+            <form method="POST" onsubmit="event.preventDefault()"></form>
+                <button type="submit" name="up" id="up" class="btn">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/comfyspace-73966.appspot.com/o/bento-backend%2Fup.png?alt=media&token=db3a8711-5f49-4534-ac63-1af256a073ee" width="150">
+                </button>
+            </form>
+            <form method="POST" onsubmit="event.preventDefault()">
+                <button type="submit" name="down" id="down" class="btn">↓</button>
+            </form>
+        </div>
+        <!--<iframe src="https://viewer.millicast.com?streamId=W3yfVd/myStreamName" allowfullscreen width="640" height="480"></iframe>-->
+
+        <div class="stick right-stick">
+            <div class="horizontal-buttons">
+                <form method="POST" onsubmit="event.preventDefault()">
+                    <button type="submit" name="left" id="left" class="btn">←</button>
+                </form>
+                <form method="POST" onsubmit="event.preventDefault()">
+                    <button type="submit" name="right" id="right" class="btn">→</button>
+                </form>
+            </div>
+        </div>
+    <!--</div>-->
+    <script>
+        function sendCommand(command) {
+            fetch('/control', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({[command]: ''}),
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function() {
+                sendCommand(this.id);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import os
 import time
 import paramiko
+from flask_cors import CORS
 
 # Paramiko client
-try:
+'''try:
     host = "us2.pitunnel.net"
     username = "comfy"
     password = "comfy"
@@ -13,13 +14,13 @@ try:
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(host, username=username, password=password, port = port)
 except:
-    print('paramiko failed')
+    print('paramiko failed')'''
 
 
 
 # Start flask app
 app = Flask(__name__)
-
+CORS(app)
 # Start tmux
 try:
     os.system('tmux kill-session -t bento1')
@@ -30,9 +31,6 @@ try:
 except:
     print('tmux & autossh failed')
 
-@app.route('/')
-def home():
-    return render_template('index.html')
 
 @app.route('/greet', methods=['POST'])
 def greet():
@@ -42,41 +40,41 @@ def greet():
 
 @app.route('/run')
 def run():
-    os.system("tmux send-keys -t bento1 'python3 dc.py 2 1' Enter")
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 0.7 & python3 dc.py 1 0.7' Enter")
     #send_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 1')
     return 'hi'
 
 @app.route('/stop')
 def stop():
-    client.exec_command("comfy i2c-dc 1 0 & comfy i2c-dc 2 0")
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 -0.7 & python3 dc.py 1 -0.7' Enter")
+    #client.exec_command("comfy i2c-dc 1 0 & comfy i2c-dc 2 0")
     return 'hi'
 
 @app.route('/left')
 def left():
-    client.exec_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 0')
+    #client.exec_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 0')
     return 'hi'
 
 @app.route('/right')
 def right():
-    client.exec_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 1')
+    #client.exec_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 1')
     return 'hi'
 
 
-@app.route('/test', methods=['GET', 'POST'])
+@app.route('/old', methods=['GET', 'POST'])
 def index():
-    result = ""
     if request.method == 'POST':
         if 'button1' in request.form:
-            client.exec_command('comfy i2c-dc 1 1')
-            #os.system("tmux send-keys -t bento1 'python3 dc.py 1 1' Enter")
+            #client.exec_command('comfy i2c-dc 1 1')
+            os.system("tmux send-keys -t bento1 'python3 dc.py 1 1' Enter")
             #send_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 1')
         elif 'button2' in request.form:
             #client.exec_command('comfy i2c-dc 2 1')
             os.system("tmux send-keys -t bento1 'python3 dc.py 2 1' Enter")
             #send_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 0')
         elif 'button3' in request.form:
-            client.exec_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 0')
-            #os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 0' Enter")
+            #client.exec_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 0')
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 0' Enter")
             #send_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 0')
     
     html = f"""
@@ -100,6 +98,38 @@ def index():
     """
     return html
 
+@app.route('/', methods=['GET', 'POST'])
+def control():
+    if request.method == 'POST':
+        if 'up' in request.form:
+            print('up')
+            os.system("tmux send-keys -t bento1 'python3 dc.py 1 1 & python3 dc.py 2 1' Enter")
+        elif 'down' in request.form: 
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 -1 & python3 dc.py 1 -1' Enter")
+        elif 'left' in request.form:
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 1 & python3 dc.py 1 -1' Enter")
+        elif 'right' in request.form:
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 0' Enter")
+    return render_template('controller.html')
+
+@app.route('/bet', methods=['GET', 'POST'])
+def ctrl():
+    if request.method == 'POST':
+        if 'up' in request.form:
+            print('up')
+            os.system("tmux send-keys -t bento1 'python3 dc.py 1 1 & python3 dc.py 2 1' Enter")
+        elif 'down' in request.form: 
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 -1 & python3 dc.py 1 -1' Enter")
+        elif 'left' in request.form:
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 1 & python3 dc.py 1 -1' Enter")
+        elif 'right' in request.form:
+            os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 0' Enter")
+        
+    return render_template('ctrl_test.html')
+
+@app.route('/test')
+def test():
+    return render_template('grid.html')
 
 def send_command(command):
     start_time = time.time()
@@ -113,5 +143,6 @@ def send_command(command):
     return 'done'
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3389, debug=True)
+    #app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug = True)
 
