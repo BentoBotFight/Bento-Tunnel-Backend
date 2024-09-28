@@ -25,7 +25,8 @@ CORS(app)
 try:
     os.system('tmux kill-session -t bento1')
     os.system('tmux new -s bento1 -d')
-    ssh_sequence = 'tmux send-keys "sshpass -p \'comfy\' autossh comfy@us2.pitunnel.net -p 22156" C-m'
+    #ssh_sequence = 'tmux send-keys "sshpass -p \'comfy\' autossh comfy@us2.pitunnel.net -p 22156" C-m'
+    ssh_sequence = 'tmux send-keys "sshpass -p \'thomas\' autossh thomas@localhost -p 1111" C-m'
     os.system(f"tmux send-keys -t bento1 \'{ssh_sequence}\' Enter")
     os.system("tmux send-keys -t bento1 'hi' Enter")
 except:
