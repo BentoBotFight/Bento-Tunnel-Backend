@@ -41,26 +41,41 @@ def greet():
 
 @app.route('/run')
 def run():
-    os.system("tmux send-keys -t bento1 'python3 dc.py 2 0.7 & python3 dc.py 1 0.7' Enter")
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 1 & python3 dc.py 1 1' Enter")
     #send_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 1')
     return 'hi'
 
 @app.route('/stop')
 def stop():
-    os.system("tmux send-keys -t bento1 'python3 dc.py 2 -0.7 & python3 dc.py 1 -0.7' Enter")
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 0' Enter")
     #client.exec_command("comfy i2c-dc 1 0 & comfy i2c-dc 2 0")
     return 'hi'
 
 @app.route('/left')
 def left():
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 1 & python3 dc.py 1 0' Enter")
+
     #client.exec_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 0')
     return 'hi'
 
 @app.route('/right')
 def right():
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 0 & python3 dc.py 1 1' Enter")
+
     #client.exec_command('comfy i2c-dc 1 0 & comfy i2c-dc 2 1')
     return 'hi'
 
+@app.route('/forward')
+def forward():
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 1 & python3 dc.py 1 1' Enter")
+    #send_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 1')
+    return 'hi'
+
+@app.route('/backward')
+def backward():
+    os.system("tmux send-keys -t bento1 'python3 dc.py 2 -1 & python3 dc.py 1 -1' Enter")
+    #send_command('comfy i2c-dc 1 1 & comfy i2c-dc 2 1')
+    return 'hi'
 
 @app.route('/old', methods=['GET', 'POST'])
 def index():
