@@ -26,6 +26,7 @@ If you wish to start your own Bentobot fight, talk to us in our Discord server: 
 - tmux, sshpass (or native SSH) installed
 - pip dependencies listed in `requirements.txt`
 - `autossh` configured for PiTunnel host
+- A cheap VPS to host the Flask server (2GB & 2vCPU should suffice, this costs 5$/month)
 
 ## Installation
 
