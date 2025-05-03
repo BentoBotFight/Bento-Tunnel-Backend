@@ -5,6 +5,7 @@ command = "comfy i2c-dc 1 1"
 # Update the next three lines with your
 # server's information
 
+# This is my default PiTunnel host, replace it with your own
 host = "us2.pitunnel.net"
 username = "comfy"
 password = "comfy"
